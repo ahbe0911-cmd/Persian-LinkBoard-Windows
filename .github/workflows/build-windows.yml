@@ -19,7 +19,7 @@ jobs:
         shell: pwsh
         run: msbuild src/PersianLinkBoard/PersianLinkBoard.csproj /t:Rebuild /p:Configuration=Release /p:Platform=AnyCPU
 
-      - name: Prepare artifact
+      - name: Prepare portable artifact
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path dist | Out-Null
@@ -28,9 +28,27 @@ jobs:
             Copy-Item src/PersianLinkBoard/bin/Release/PersianLinkBoard.exe.config dist/PersianLinkBoard.exe.config
           }
 
-      - name: Upload EXE
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (!(Test-Path $iscc)) { throw "ISCC.exe not found" }
+          & $iscc installer/PersianLinkBoard.iss
+
+      - name: Upload portable EXE
         uses: actions/upload-artifact@v4
         with:
-          name: Persian-LinkBoard-Windows
+          name: Persian-LinkBoard-Portable
           path: dist/*
+          if-no-files-found: error
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Persian-LinkBoard-Installer
+          path: dist-installer/Persian-LinkBoard-Setup.exe
           if-no-files-found: error
