@@ -10,8 +10,7 @@
         <SolidColorBrush x:Key="MutedBrush" Color="#9AA8BE"/>
         <SolidColorBrush x:Key="BorderBrush" Color="#263854"/>
 
-        <!-- Vazirmatn is preferred when installed; Segoe UI/Tahoma remain safe fallbacks on Windows 8.1. -->
-        <FontFamily x:Key="PersianFont">Vazirmatn, Segoe UI, Tahoma</FontFamily>
+        <FontFamily x:Key="PersianFont">./Fonts/#Vazirmatn</FontFamily>
 
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
