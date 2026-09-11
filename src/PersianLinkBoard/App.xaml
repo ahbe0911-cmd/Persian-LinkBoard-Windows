@@ -3,30 +3,44 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="BgBrush" Color="#101828"/>
-        <SolidColorBrush x:Key="PanelBrush" Color="#17233A"/>
-        <SolidColorBrush x:Key="CardBrush" Color="#1D2A44"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#6C7CFF"/>
-        <SolidColorBrush x:Key="MutedBrush" Color="#AAB4C8"/>
+        <SolidColorBrush x:Key="BgBrush" Color="#0B1220"/>
+        <SolidColorBrush x:Key="PanelBrush" Color="#111C30"/>
+        <SolidColorBrush x:Key="CardBrush" Color="#17243B"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#6877F5"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="#9AA8BE"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#263854"/>
+
+        <!-- Vazirmatn is preferred when installed; Segoe UI/Tahoma remain safe fallbacks on Windows 8.1. -->
+        <FontFamily x:Key="PersianFont">Vazirmatn, Segoe UI, Tahoma</FontFamily>
+
         <Style TargetType="TextBlock">
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
+            <Setter Property="Foreground" Value="#F5F7FB"/>
         </Style>
         <Style TargetType="Button">
-            <Setter Property="FontFamily" Value="Tahoma"/>
+            <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#263654"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="Background" Value="#223451"/>
+            <Setter Property="BorderBrush" Value="#304665"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="13,8"/>
             <Setter Property="Margin" Value="4"/>
             <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="MinHeight" Value="36"/>
         </Style>
         <Style TargetType="TextBox">
-            <Setter Property="FontFamily" Value="Tahoma"/>
-            <Setter Property="Background" Value="#18253D"/>
+            <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
+            <Setter Property="Background" Value="#142238"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#31415F"/>
-            <Setter Property="Padding" Value="12,9"/>
+            <Setter Property="CaretBrush" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="13,9"/>
+        </Style>
+        <Style TargetType="CheckBox">
+            <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
+            <Setter Property="Foreground" Value="#F5F7FB"/>
+            <Setter Property="Margin" Value="4"/>
         </Style>
     </Application.Resources>
 </Application>
