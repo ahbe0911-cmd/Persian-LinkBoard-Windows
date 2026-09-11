@@ -1,5 +1,5 @@
 #define MyAppName "Persian LinkBoard"
-#define MyAppVersion "0.2.0"
+#define MyAppVersion "0.4.0"
 #define MyAppPublisher "Persian LinkBoard"
 #define MyAppExeName "PersianLinkBoard.exe"
 
@@ -18,6 +18,7 @@ SolidCompression=yes
 WizardStyle=modern
 ArchitecturesAllowed=x86 x64
 PrivilegesRequired=lowest
+SetupIconFile=..\src\PersianLinkBoard\Assets\App.ico
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Languages]
