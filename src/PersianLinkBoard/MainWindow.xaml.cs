@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Threading;
 using System.Xml.Serialization;
 
@@ -18,11 +19,27 @@ namespace PersianLinkBoard
     {
         private readonly string dataFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PersianLinkBoard");
         private readonly string dataFile;
+        private readonly string settingsFile;
         private readonly PersianCalendar persianCalendar = new PersianCalendar();
         private readonly DispatcherTimer clockTimer;
+        private Point dragStartPoint;
+        private LinkItem draggedLink;
+        private bool showSeconds = true;
+        private bool compactMode = false;
+        private double cardWidth = 236;
 
         public ObservableCollection<LinkItem> Links { get; } = new ObservableCollection<LinkItem>();
         public ICollectionView LinksView { get; private set; }
+        public double CardWidth
+        {
+            get { return cardWidth; }
+            set
+            {
+                if (Math.Abs(cardWidth - value) < 0.1) return;
+                cardWidth = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CardWidth)));
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -30,12 +47,15 @@ namespace PersianLinkBoard
         {
             InitializeComponent();
             dataFile = Path.Combine(dataFolder, "links.xml");
+            settingsFile = Path.Combine(dataFolder, "settings.txt");
 
+            LoadSettings();
             LoadLinks();
             LinksView = CollectionViewSource.GetDefaultView(Links);
             LinksView.Filter = FilterLink;
             DataContext = this;
-            UpdateCount();
+            ApplySettings();
+            UpdateStats();
             UpdateClock();
 
             clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
@@ -74,7 +94,7 @@ namespace PersianLinkBoard
             Links.Add(new LinkItem(title.Trim(), url.Trim(), category.Trim()));
             SaveLinks();
             LinksView.Refresh();
-            UpdateCount();
+            UpdateStats();
         }
 
         private void EditLink_Click(object sender, RoutedEventArgs e)
@@ -94,6 +114,7 @@ namespace PersianLinkBoard
 
             SaveLinks();
             LinksView.Refresh();
+            UpdateStats();
         }
 
         private void DeleteLink_Click(object sender, RoutedEventArgs e)
@@ -105,29 +126,40 @@ namespace PersianLinkBoard
             Links.Remove(link);
             SaveLinks();
             LinksView.Refresh();
-            UpdateCount();
+            UpdateStats();
         }
 
-        private void MoveUp_Click(object sender, RoutedEventArgs e)
+        private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            var link = (sender as Button)?.Tag as LinkItem;
-            if (link == null) return;
-            int index = Links.IndexOf(link);
-            if (index <= 0) return;
-            Links.Move(index, index - 1);
-            SaveLinks();
-            LinksView.Refresh();
+            dragStartPoint = e.GetPosition(null);
+            draggedLink = (sender as Border)?.Tag as LinkItem;
         }
 
-        private void MoveDown_Click(object sender, RoutedEventArgs e)
+        private void Card_MouseMove(object sender, MouseEventArgs e)
         {
-            var link = (sender as Button)?.Tag as LinkItem;
-            if (link == null) return;
-            int index = Links.IndexOf(link);
-            if (index < 0 || index >= Links.Count - 1) return;
-            Links.Move(index, index + 1);
+            if (e.LeftButton != MouseButtonState.Pressed || draggedLink == null) return;
+            Point current = e.GetPosition(null);
+            Vector diff = dragStartPoint - current;
+            if (Math.Abs(diff.X) < SystemParameters.MinimumHorizontalDragDistance &&
+                Math.Abs(diff.Y) < SystemParameters.MinimumVerticalDragDistance) return;
+
+            DragDrop.DoDragDrop((DependencyObject)sender, draggedLink, DragDropEffects.Move);
+        }
+
+        private void Card_Drop(object sender, DragEventArgs e)
+        {
+            var target = (sender as Border)?.Tag as LinkItem;
+            var source = e.Data.GetData(typeof(LinkItem)) as LinkItem;
+            if (source == null || target == null || ReferenceEquals(source, target)) return;
+
+            int oldIndex = Links.IndexOf(source);
+            int newIndex = Links.IndexOf(target);
+            if (oldIndex < 0 || newIndex < 0) return;
+
+            Links.Move(oldIndex, newIndex);
             SaveLinks();
             LinksView.Refresh();
+            draggedLink = null;
         }
 
         private void OpenLink_Click(object sender, RoutedEventArgs e)
@@ -204,28 +236,107 @@ namespace PersianLinkBoard
             }
         }
 
+        private void LoadSettings()
+        {
+            try
+            {
+                Directory.CreateDirectory(dataFolder);
+                if (!File.Exists(settingsFile)) return;
+                foreach (var line in File.ReadAllLines(settingsFile))
+                {
+                    var parts = line.Split(new[] { '=' }, 2);
+                    if (parts.Length != 2) continue;
+                    bool value;
+                    if (!bool.TryParse(parts[1], out value)) continue;
+                    if (parts[0] == "Topmost") Topmost = value;
+                    else if (parts[0] == "ShowSeconds") showSeconds = value;
+                    else if (parts[0] == "CompactMode") compactMode = value;
+                }
+            }
+            catch { }
+        }
+
+        private void SaveSettings()
+        {
+            try
+            {
+                Directory.CreateDirectory(dataFolder);
+                File.WriteAllLines(settingsFile, new[]
+                {
+                    "Topmost=" + Topmost,
+                    "ShowSeconds=" + showSeconds,
+                    "CompactMode=" + compactMode
+                });
+            }
+            catch { }
+        }
+
+        private void ApplySettings()
+        {
+            CardWidth = compactMode ? 205 : 236;
+            LayoutModeText.Text = compactMode ? "فشرده" : "استاندارد";
+            UpdateClock();
+        }
+
         private void UpdateClock()
         {
             var now = DateTime.Now;
-            ClockText.Text = now.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
+            ClockText.Text = now.ToString(showSeconds ? "HH:mm:ss" : "HH:mm", CultureInfo.InvariantCulture);
             DateText.Text = string.Format(CultureInfo.InvariantCulture, "{0:0000}/{1:00}/{2:00}", persianCalendar.GetYear(now), persianCalendar.GetMonth(now), persianCalendar.GetDayOfMonth(now));
         }
 
-        private void UpdateCount()
+        private void UpdateStats()
         {
+            int categories = Links.Select(x => string.IsNullOrWhiteSpace(x.Category) ? "عمومی" : x.Category).Distinct().Count();
             CountText.Text = Links.Count + " لینک";
+            CategoryCountText.Text = categories + " دسته";
+            DashboardLinksText.Text = Links.Count.ToString(CultureInfo.InvariantCulture);
+            DashboardCategoriesText.Text = categories.ToString(CultureInfo.InvariantCulture);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show("می‌خواهی برنامه همیشه روی پنجره‌های دیگر باقی بماند؟\n\nYes = فعال\nNo = غیرفعال", "تنظیمات", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes) Topmost = true;
-            else if (result == MessageBoxResult.No) Topmost = false;
+            var dialog = new Window
+            {
+                Title = "تنظیمات لینک‌برد",
+                Width = 390,
+                Height = 310,
+                ResizeMode = ResizeMode.NoResize,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                Background = (System.Windows.Media.Brush)Application.Current.Resources["PanelBrush"],
+                FlowDirection = FlowDirection.RightToLeft
+            };
+
+            var panel = new StackPanel { Margin = new Thickness(22) };
+            panel.Children.Add(new TextBlock { Text = "تنظیمات نمایش", FontSize = 21, FontWeight = FontWeights.Bold, Margin = new Thickness(0, 0, 0, 18) });
+
+            var topmostBox = new CheckBox { Content = "همیشه روی سایر پنجره‌ها باشد", IsChecked = Topmost, Margin = new Thickness(0, 6, 0, 6) };
+            var secondsBox = new CheckBox { Content = "نمایش ثانیه در ساعت", IsChecked = showSeconds, Margin = new Thickness(0, 6, 0, 6) };
+            var compactBox = new CheckBox { Content = "چیدمان فشرده کارت‌ها", IsChecked = compactMode, Margin = new Thickness(0, 6, 0, 6) };
+            panel.Children.Add(topmostBox);
+            panel.Children.Add(secondsBox);
+            panel.Children.Add(compactBox);
+
+            var saveButton = new Button { Content = "ذخیره تنظیمات", Background = (System.Windows.Media.Brush)Application.Current.Resources["AccentBrush"], Margin = new Thickness(0, 22, 0, 0) };
+            saveButton.Click += (s, args) =>
+            {
+                Topmost = topmostBox.IsChecked == true;
+                showSeconds = secondsBox.IsChecked == true;
+                compactMode = compactBox.IsChecked == true;
+                ApplySettings();
+                SaveSettings();
+                dialog.DialogResult = true;
+                dialog.Close();
+            };
+            panel.Children.Add(saveButton);
+            dialog.Content = panel;
+            dialog.ShowDialog();
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Persian LinkBoard\nنسخه 0.2\nلانچر لینک‌های کاربردی برای Windows 8.1 / 10 / 11", "درباره برنامه", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Persian LinkBoard\nنسخه 0.3\nفونت Vazirmatn داخلی + Drag & Drop + تنظیمات پایدار\nWindows 8.1 / 10 / 11", "درباره برنامه", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
