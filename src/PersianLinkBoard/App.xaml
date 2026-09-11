@@ -3,39 +3,104 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <SolidColorBrush x:Key="BgBrush" Color="#0B1220"/>
-        <SolidColorBrush x:Key="PanelBrush" Color="#111C30"/>
-        <SolidColorBrush x:Key="CardBrush" Color="#17243B"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#6877F5"/>
-        <SolidColorBrush x:Key="MutedBrush" Color="#9AA8BE"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#263854"/>
+        <Color x:Key="BgColor">#0A1020</Color>
+        <Color x:Key="PanelColor">#8A111A31</Color>
+        <Color x:Key="CardColor">#8F182540</Color>
+        <Color x:Key="AccentColor">#7C83FF</Color>
+        <Color x:Key="Accent2Color">#7ADBC7</Color>
+        <Color x:Key="MutedColor">#A9B5C9</Color>
+        <Color x:Key="GlassBorderColor">#38FFFFFF</Color>
+
+        <SolidColorBrush x:Key="BgBrush" Color="{StaticResource BgColor}"/>
+        <SolidColorBrush x:Key="PanelBrush" Color="{StaticResource PanelColor}"/>
+        <SolidColorBrush x:Key="CardBrush" Color="{StaticResource CardColor}"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource AccentColor}"/>
+        <SolidColorBrush x:Key="Accent2Brush" Color="{StaticResource Accent2Color}"/>
+        <SolidColorBrush x:Key="MutedBrush" Color="{StaticResource MutedColor}"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource GlassBorderColor}"/>
+        <SolidColorBrush x:Key="GlassHoverBrush" Color="#B02A3A60"/>
+
+        <LinearGradientBrush x:Key="WindowGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0B1223" Offset="0"/>
+            <GradientStop Color="#111A32" Offset="0.45"/>
+            <GradientStop Color="#1A1636" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="AccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#6F7BFF" Offset="0"/>
+            <GradientStop Color="#926BFF" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="SoftAccentGradient" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#4C6F7BFF" Offset="0"/>
+            <GradientStop Color="#358F6BFF" Offset="1"/>
+        </LinearGradientBrush>
 
         <FontFamily x:Key="PersianFont">./Fonts/#Vazirmatn</FontFamily>
 
         <Style TargetType="TextBlock">
             <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
-            <Setter Property="Foreground" Value="#F5F7FB"/>
+            <Setter Property="Foreground" Value="#F8FAFF"/>
         </Style>
-        <Style TargetType="Button">
+
+        <Style x:Key="GlassButtonStyle" TargetType="Button">
             <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Background" Value="#223451"/>
-            <Setter Property="BorderBrush" Value="#304665"/>
+            <Setter Property="Foreground" Value="#F8FAFF"/>
+            <Setter Property="Background" Value="#551D2A46"/>
+            <Setter Property="BorderBrush" Value="#2EFFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="13,8"/>
-            <Setter Property="Margin" Value="4"/>
+            <Setter Property="Margin" Value="3"/>
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="11" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="#A32A3A60"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="#68FFFFFF"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.82"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.45"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
+
+        <Style TargetType="Button" BasedOn="{StaticResource GlassButtonStyle}"/>
+
+        <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource GlassButtonStyle}">
+            <Setter Property="Background" Value="{StaticResource AccentGradient}"/>
+            <Setter Property="BorderBrush" Value="#7AFFFFFF"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
         <Style TargetType="TextBox">
             <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
-            <Setter Property="Background" Value="#142238"/>
+            <Setter Property="Background" Value="#68142036"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="CaretBrush" Value="White"/>
-            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="BorderBrush" Value="#38FFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Padding" Value="13,9"/>
         </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
+            <Setter Property="Foreground" Value="#F8FAFF"/>
+            <Setter Property="Background" Value="#68142036"/>
+            <Setter Property="BorderBrush" Value="#38FFFFFF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="8,4"/>
+        </Style>
+
         <Style TargetType="CheckBox">
             <Setter Property="FontFamily" Value="{StaticResource PersianFont}"/>
             <Setter Property="Foreground" Value="#F5F7FB"/>
