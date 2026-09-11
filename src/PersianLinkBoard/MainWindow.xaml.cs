@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -54,6 +55,7 @@ namespace PersianLinkBoard
             DataContext = this;
             ApplySettings();
             UpdateStats();
+            UpdateCategoryFilter();
             UpdateClock();
             clockTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
             clockTimer.Tick += (s, e) => UpdateClock();
@@ -64,7 +66,12 @@ namespace PersianLinkBoard
         {
             var link = item as LinkItem;
             if (link == null) return false;
+
             var q = (SearchBox?.Text ?? string.Empty).Trim();
+            var selectedCategory = CategoryFilter?.SelectedItem as string;
+            bool categoryMatch = string.IsNullOrWhiteSpace(selectedCategory) || selectedCategory == "همه دسته‌ها" || string.Equals(link.Category ?? "عمومی", selectedCategory, StringComparison.CurrentCultureIgnoreCase);
+            if (!categoryMatch) return false;
+
             if (q.Length == 0) return true;
             return (link.Title ?? string.Empty).IndexOf(q, StringComparison.CurrentCultureIgnoreCase) >= 0
                 || (link.Url ?? string.Empty).IndexOf(q, StringComparison.OrdinalIgnoreCase) >= 0
@@ -72,6 +79,7 @@ namespace PersianLinkBoard
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e) { LinksView?.Refresh(); }
+        private void CategoryFilter_SelectionChanged(object sender, SelectionChangedEventArgs e) { LinksView?.Refresh(); }
 
         private void AddLink_Click(object sender, RoutedEventArgs e)
         {
@@ -81,6 +89,7 @@ namespace PersianLinkBoard
             SaveLinks();
             LinksView.Refresh();
             UpdateStats();
+            UpdateCategoryFilter(dialog.LinkCategory);
         }
 
         private void EditLink_Click(object sender, RoutedEventArgs e)
@@ -95,6 +104,23 @@ namespace PersianLinkBoard
             SaveLinks();
             LinksView.Refresh();
             UpdateStats();
+            UpdateCategoryFilter();
+        }
+
+        private void PinLink_Click(object sender, RoutedEventArgs e)
+        {
+            var link = (sender as Button)?.Tag as LinkItem;
+            if (link == null) return;
+            link.IsPinned = !link.IsPinned;
+            if (link.IsPinned)
+            {
+                int index = Links.IndexOf(link);
+                if (index > 0) Links.Move(index, 0);
+            }
+            SaveLinks();
+            LinksView.Refresh();
+            LinksControl.Items.Refresh();
+            UpdateStats();
         }
 
         private void DeleteLink_Click(object sender, RoutedEventArgs e)
@@ -106,6 +132,7 @@ namespace PersianLinkBoard
             SaveLinks();
             LinksView.Refresh();
             UpdateStats();
+            UpdateCategoryFilter();
         }
 
         private void Card_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -152,6 +179,52 @@ namespace PersianLinkBoard
             MessageBox.Show(groups.Length == 0 ? "هنوز دسته‌بندی‌ای وجود ندارد." : string.Join("\n", groups), "دسته‌بندی‌ها", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
+        private void Backup_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                SaveLinks();
+                var dialog = new SaveFileDialog
+                {
+                    Title = "ذخیره نسخه پشتیبان لینک‌برد",
+                    FileName = "Persian-LinkBoard-Backup-" + DateTime.Now.ToString("yyyyMMdd-HHmm") + ".xml",
+                    Filter = "LinkBoard Backup (*.xml)|*.xml"
+                };
+                if (dialog.ShowDialog(this) != true) return;
+                File.Copy(dataFile, dialog.FileName, true);
+                MessageBox.Show("نسخه پشتیبان با موفقیت ذخیره شد.", "بکاپ", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("ساخت بکاپ انجام نشد.\n" + ex.Message, "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void Restore_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new OpenFileDialog { Title = "انتخاب نسخه پشتیبان", Filter = "LinkBoard Backup (*.xml)|*.xml" };
+            if (dialog.ShowDialog(this) != true) return;
+            if (MessageBox.Show("اطلاعات فعلی با بکاپ انتخاب‌شده جایگزین شود؟", "بازیابی", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes) return;
+            try
+            {
+                var serializer = new XmlSerializer(typeof(ObservableCollection<LinkItem>));
+                ObservableCollection<LinkItem> restored;
+                using (var stream = File.OpenRead(dialog.FileName)) restored = serializer.Deserialize(stream) as ObservableCollection<LinkItem>;
+                if (restored == null) throw new InvalidDataException("فایل بکاپ معتبر نیست.");
+                Links.Clear();
+                foreach (var item in restored) Links.Add(item);
+                SaveLinks();
+                LinksView.Refresh();
+                UpdateStats();
+                UpdateCategoryFilter();
+                MessageBox.Show("بازیابی با موفقیت انجام شد.", "بازیابی", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("بازیابی انجام نشد.\n" + ex.Message, "خطا", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
         private void LoadLinks()
         {
             try
@@ -184,6 +257,17 @@ namespace PersianLinkBoard
                 using (var stream = File.Create(dataFile)) serializer.Serialize(stream, Links);
             }
             catch (Exception ex) { MessageBox.Show("ذخیره اطلاعات انجام نشد.\n" + ex.Message, "خطا", MessageBoxButton.OK, MessageBoxImage.Warning); }
+        }
+
+        private void UpdateCategoryFilter(string preferred = null)
+        {
+            if (CategoryFilter == null) return;
+            var current = preferred ?? CategoryFilter.SelectedItem as string ?? "همه دسته‌ها";
+            var categories = Links.Select(x => string.IsNullOrWhiteSpace(x.Category) ? "عمومی" : x.Category).Distinct().OrderBy(x => x).ToList();
+            CategoryFilter.Items.Clear();
+            CategoryFilter.Items.Add("همه دسته‌ها");
+            foreach (var category in categories) CategoryFilter.Items.Add(category);
+            CategoryFilter.SelectedItem = CategoryFilter.Items.Contains(current) ? current : "همه دسته‌ها";
         }
 
         private void LoadSettings()
@@ -233,10 +317,13 @@ namespace PersianLinkBoard
         private void UpdateStats()
         {
             int categories = Links.Select(x => string.IsNullOrWhiteSpace(x.Category) ? "عمومی" : x.Category).Distinct().Count();
+            int pinned = Links.Count(x => x.IsPinned);
             CountText.Text = Links.Count + " لینک";
             CategoryCountText.Text = categories + " دسته";
+            PinnedCountText.Text = pinned + " پین";
             DashboardLinksText.Text = Links.Count.ToString(CultureInfo.InvariantCulture);
             DashboardCategoriesText.Text = categories.ToString(CultureInfo.InvariantCulture);
+            DashboardPinnedText.Text = pinned.ToString(CultureInfo.InvariantCulture);
         }
 
         private void Settings_Click(object sender, RoutedEventArgs e)
@@ -255,7 +342,7 @@ namespace PersianLinkBoard
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Persian LinkBoard\nنسخه 0.4\nفرم حرفه‌ای لینک + نشانه سایت + Drag & Drop + Vazirmatn\nWindows 8.1 / 10 / 11", "درباره برنامه", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Persian LinkBoard\nنسخه 0.5\nفیلتر دسته‌بندی + پین لینک‌ها + بکاپ و بازیابی + Drag & Drop + Vazirmatn\nWindows 8.1 / 10 / 11", "درباره برنامه", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
