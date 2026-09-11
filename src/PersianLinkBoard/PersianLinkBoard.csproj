@@ -9,6 +9,7 @@
     <RootNamespace>PersianLinkBoard</RootNamespace>
     <AssemblyName>PersianLinkBoard</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <ApplicationIcon>Assets\App.ico</ApplicationIcon>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -45,11 +46,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="LinkEditorWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LinkEditorWindow.xaml.cs">
+      <DependentUpon>LinkEditorWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="LinkItem.cs" />
   </ItemGroup>
