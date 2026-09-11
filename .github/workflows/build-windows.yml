@@ -26,6 +26,10 @@ jobs:
           Invoke-WebRequest "$base/Vazirmatn-SemiBold.ttf" -OutFile "$fontDir/Vazirmatn-SemiBold.ttf"
           Invoke-WebRequest "$base/Vazirmatn-Bold.ttf" -OutFile "$fontDir/Vazirmatn-Bold.ttf"
 
+      - name: Generate LinkBoard app icon
+        shell: pwsh
+        run: ./tools/Generate-AppIcon.ps1
+
       - name: Build Release
         shell: pwsh
         run: msbuild src/PersianLinkBoard/PersianLinkBoard.csproj /t:Rebuild /p:Configuration=Release /p:Platform=AnyCPU
