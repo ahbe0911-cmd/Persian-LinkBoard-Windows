@@ -15,6 +15,17 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
+      - name: Download Vazirmatn v33.003 fonts
+        shell: pwsh
+        run: |
+          $fontDir = "src/PersianLinkBoard/Fonts"
+          New-Item -ItemType Directory -Force -Path $fontDir | Out-Null
+          $base = "https://raw.githubusercontent.com/rastikerdar/vazirmatn/v33.003/fonts/ttf"
+          Invoke-WebRequest "$base/Vazirmatn-Regular.ttf" -OutFile "$fontDir/Vazirmatn-Regular.ttf"
+          Invoke-WebRequest "$base/Vazirmatn-Medium.ttf" -OutFile "$fontDir/Vazirmatn-Medium.ttf"
+          Invoke-WebRequest "$base/Vazirmatn-SemiBold.ttf" -OutFile "$fontDir/Vazirmatn-SemiBold.ttf"
+          Invoke-WebRequest "$base/Vazirmatn-Bold.ttf" -OutFile "$fontDir/Vazirmatn-Bold.ttf"
+
       - name: Build Release
         shell: pwsh
         run: msbuild src/PersianLinkBoard/PersianLinkBoard.csproj /t:Rebuild /p:Configuration=Release /p:Platform=AnyCPU
