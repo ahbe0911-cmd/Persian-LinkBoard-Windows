@@ -53,5 +53,11 @@
     </Compile>
     <Compile Include="LinkItem.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Fonts\Vazirmatn-Regular.ttf" />
+    <Resource Include="Fonts\Vazirmatn-Medium.ttf" />
+    <Resource Include="Fonts\Vazirmatn-SemiBold.ttf" />
+    <Resource Include="Fonts\Vazirmatn-Bold.ttf" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
