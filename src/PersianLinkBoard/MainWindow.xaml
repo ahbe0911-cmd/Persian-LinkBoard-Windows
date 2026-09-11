@@ -1,223 +1,166 @@
 <Window x:Class="PersianLinkBoard.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="لینک‌برد فارسی" Height="820" Width="1320" MinHeight="700" MinWidth="1060"
+        Title="لینک‌برد فارسی" Height="800" Width="1280" MinHeight="650" MinWidth="980"
         WindowStartupLocation="CenterScreen" Background="{StaticResource WindowGradient}"
         FlowDirection="RightToLeft" FontFamily="{StaticResource PersianFont}">
     <Window.Resources>
-        <DropShadowEffect x:Key="SoftShadow" BlurRadius="24" ShadowDepth="0" Opacity="0.28" Color="#050816"/>
         <Style x:Key="SideButton" TargetType="Button" BasedOn="{StaticResource GlassButtonStyle}">
             <Setter Property="HorizontalContentAlignment" Value="Right"/>
-            <Setter Property="Background" Value="#241B2943"/>
+            <Setter Property="Background" Value="#221B2943"/>
             <Setter Property="BorderBrush" Value="#20FFFFFF"/>
-            <Setter Property="Margin" Value="0,0,0,7"/>
-            <Setter Property="MinHeight" Value="42"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="MinHeight" Value="40"/>
         </Style>
         <Style x:Key="MiniIconButton" TargetType="Button" BasedOn="{StaticResource GlassButtonStyle}">
-            <Setter Property="Width" Value="32"/>
-            <Setter Property="Height" Value="32"/>
-            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="Width" Value="30"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="MinHeight" Value="30"/>
             <Setter Property="Padding" Value="0"/>
             <Setter Property="Margin" Value="0"/>
         </Style>
     </Window.Resources>
 
-    <Grid ClipToBounds="True">
-        <!-- Atmospheric background -->
-        <Ellipse Width="620" Height="620" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="-220,-260,0,0" Opacity="0.28">
-            <Ellipse.Fill>
-                <RadialGradientBrush>
-                    <GradientStop Color="#845E7CFF" Offset="0"/>
-                    <GradientStop Color="#005E7CFF" Offset="1"/>
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-        </Ellipse>
-        <Ellipse Width="540" Height="540" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,-210,-220" Opacity="0.24">
-            <Ellipse.Fill>
-                <RadialGradientBrush>
-                    <GradientStop Color="#667A4BFF" Offset="0"/>
-                    <GradientStop Color="#007A4BFF" Offset="1"/>
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-        </Ellipse>
-        <Ellipse Width="380" Height="380" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,150,-220" Opacity="0.16">
-            <Ellipse.Fill>
-                <RadialGradientBrush>
-                    <GradientStop Color="#607ADBC7" Offset="0"/>
-                    <GradientStop Color="#007ADBC7" Offset="1"/>
-                </RadialGradientBrush>
-            </Ellipse.Fill>
-        </Ellipse>
+    <Grid Margin="14">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="212"/>
+            <ColumnDefinition Width="14"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <Grid Margin="18">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220"/>
-                <ColumnDefinition Width="18"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <Border Grid.Column="0" CornerRadius="24" Background="#B00E1728" BorderBrush="#2EFFFFFF" BorderThickness="1" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="22"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <!-- Glass sidebar -->
-            <Border Grid.Column="0" CornerRadius="28" Background="#8A101A2D" BorderBrush="#38FFFFFF" BorderThickness="1" Padding="16" Effect="{StaticResource SoftShadow}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="24"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-
-                    <StackPanel>
-                        <Grid>
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                            <Border Width="48" Height="48" CornerRadius="15" Background="{StaticResource AccentGradient}" BorderBrush="#66FFFFFF" BorderThickness="1">
-                                <TextBlock Text="↗" FontSize="27" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Column="1" Margin="10,3,0,0">
-                                <TextBlock Text="LinkBoard" FontSize="20" FontWeight="Bold" FlowDirection="LeftToRight" TextAlignment="Right"/>
-                                <TextBlock Text="لینک‌برد فارسی" Foreground="#AFC0D8" FontSize="11"/>
-                            </StackPanel>
-                        </Grid>
-                        <TextBlock Text="میانبرهای شما، مرتب و همیشه در دسترس" Foreground="#8FA0B8" FontSize="11" Margin="0,12,0,0" TextWrapping="Wrap"/>
-                    </StackPanel>
-
-                    <StackPanel Grid.Row="2">
-                        <Button Style="{StaticResource SideButton}" Content="⌂   خانه" Background="#69344B78" BorderBrush="#55FFFFFF"/>
-                        <Button Style="{StaticResource SideButton}" Content="▦   دسته‌بندی‌ها" Click="Categories_Click"/>
-                        <Button Style="{StaticResource SideButton}" Content="💾   پشتیبان‌گیری" Click="Backup_Click"/>
-                        <Button Style="{StaticResource SideButton}" Content="↺   بازیابی" Click="Restore_Click"/>
-                        <Button Style="{StaticResource SideButton}" Content="⚙   تنظیمات" Click="Settings_Click"/>
-                        <Button Style="{StaticResource SideButton}" Content="ⓘ   درباره برنامه" Click="About_Click"/>
-                    </StackPanel>
-
-                    <Border Grid.Row="4" CornerRadius="19" Padding="13" BorderBrush="#34FFFFFF" BorderThickness="1">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#5538507F" Offset="0"/>
-                                <GradientStop Color="#332A3556" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <StackPanel>
-                            <TextBlock Text="خلاصه برد" FontSize="12" FontWeight="SemiBold"/>
-                            <Grid Margin="0,10,0,0">
-                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                <StackPanel><TextBlock x:Name="CountText" Text="۰ لینک" FontSize="15" FontWeight="Bold" Foreground="#AEB7FF"/><TextBlock Text="کل لینک‌ها" FontSize="9" Foreground="#8795AA"/></StackPanel>
-                                <StackPanel Grid.Column="1"><TextBlock x:Name="PinnedCountText" Text="۰ پین" FontSize="15" FontWeight="Bold" Foreground="#FFD991"/><TextBlock Text="محبوب‌ها" FontSize="9" Foreground="#8795AA"/></StackPanel>
-                            </Grid>
-                            <TextBlock x:Name="CategoryCountText" Text="۰ دسته" Margin="0,8,0,0" FontSize="10" Foreground="#7ADBC7"/>
-                        </StackPanel>
-                    </Border>
-                </Grid>
-            </Border>
-
-            <!-- Main glass workspace -->
-            <Border Grid.Column="2" CornerRadius="30" Background="#63111A2E" BorderBrush="#32FFFFFF" BorderThickness="1" Padding="22" Effect="{StaticResource SoftShadow}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="14"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <!-- Header -->
+                <StackPanel>
                     <Grid>
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock Text="سلام، خوش اومدی 👋" FontSize="28" FontWeight="Bold"/>
-                            <TextBlock Text="همه لینک‌های مهمت را در یک داشبورد شیشه‌ای و مرتب نگه دار." Foreground="#93A3BB" FontSize="13" Margin="0,5,0,0"/>
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="50"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <Border Width="46" Height="46" CornerRadius="14" Background="{StaticResource AccentGradient}">
+                            <TextBlock Text="↗" FontSize="25" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <StackPanel Grid.Column="1" Margin="10,2,0,0">
+                            <TextBlock Text="LinkBoard" FontSize="19" FontWeight="Bold" FlowDirection="LeftToRight" TextAlignment="Right"/>
+                            <TextBlock Text="لینک‌برد فارسی" FontSize="10" Foreground="#91A0B7"/>
                         </StackPanel>
-                        <Border Grid.Column="1" CornerRadius="17" Padding="14,8" Background="#5016243D" BorderBrush="#34FFFFFF" BorderThickness="1">
-                            <StackPanel HorizontalAlignment="Left">
-                                <TextBlock x:Name="ClockText" Text="--:--:--" FontSize="21" FontWeight="Bold" TextAlignment="Left" FlowDirection="LeftToRight"/>
-                                <TextBlock x:Name="DateText" Text="----/--/--" Foreground="#91A1B7" FontSize="10" Margin="0,2,0,0" TextAlignment="Left" FlowDirection="LeftToRight"/>
-                            </StackPanel>
-                        </Border>
                     </Grid>
+                    <TextBlock Text="دسترسی سریع به لینک‌های پرکاربرد" FontSize="10" Foreground="#7E8DA4" Margin="0,10,0,0"/>
+                </StackPanel>
 
-                    <!-- Search/control bar -->
-                    <Border Grid.Row="2" CornerRadius="18" Background="#54142239" BorderBrush="#34FFFFFF" BorderThickness="1" Padding="8">
-                        <Grid>
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="176"/><ColumnDefinition Width="132"/></Grid.ColumnDefinitions>
-                            <Grid>
-                                <TextBlock Text="⌕" FontSize="23" Foreground="#8998B1" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,10,0"/>
-                                <TextBox x:Name="SearchBox" Height="42" Margin="34,0,0,0" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged" ToolTip="جستجو در عنوان، آدرس و دسته‌بندی" Background="#18000000" BorderBrush="#00FFFFFF" BorderThickness="0"/>
-                            </Grid>
-                            <ComboBox x:Name="CategoryFilter" Grid.Column="1" Margin="8,0" Height="42" VerticalContentAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"/>
-                            <Button Grid.Column="2" Content="+ افزودن لینک" Style="{StaticResource AccentButtonStyle}" Margin="0" Click="AddLink_Click"/>
+                <StackPanel Grid.Row="2">
+                    <Button Style="{StaticResource SideButton}" Content="⌂   خانه" Background="#563D4F80"/>
+                    <Button Style="{StaticResource SideButton}" Content="▦   دسته‌بندی‌ها" Click="Categories_Click"/>
+                    <Button Style="{StaticResource SideButton}" Content="💾   پشتیبان‌گیری" Click="Backup_Click"/>
+                    <Button Style="{StaticResource SideButton}" Content="↺   بازیابی" Click="Restore_Click"/>
+                    <Button Style="{StaticResource SideButton}" Content="⚙   تنظیمات" Click="Settings_Click"/>
+                    <Button Style="{StaticResource SideButton}" Content="ⓘ   درباره برنامه" Click="About_Click"/>
+                </StackPanel>
+
+                <Border Grid.Row="4" CornerRadius="17" Background="#281B2A44" BorderBrush="#20FFFFFF" BorderThickness="1" Padding="12">
+                    <StackPanel>
+                        <TextBlock Text="خلاصه" FontSize="11" Foreground="#A9B5C9"/>
+                        <Grid Margin="0,8,0,0">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                            <StackPanel><TextBlock x:Name="CountText" Text="۰ لینک" FontSize="15" FontWeight="Bold" Foreground="#B8C0FF"/><TextBlock Text="لینک" FontSize="9" Foreground="#738198"/></StackPanel>
+                            <StackPanel Grid.Column="1"><TextBlock x:Name="PinnedCountText" Text="۰ پین" FontSize="15" FontWeight="Bold" Foreground="#FFD68C"/><TextBlock Text="پین" FontSize="9" Foreground="#738198"/></StackPanel>
                         </Grid>
+                        <TextBlock x:Name="CategoryCountText" Text="۰ دسته" FontSize="10" Foreground="#7ADBC7" Margin="0,7,0,0"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Column="2" CornerRadius="25" Background="#A0101829" BorderBrush="#2CFFFFFF" BorderThickness="1" Padding="18">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="14"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="لینک‌های کاربردی" FontSize="27" FontWeight="Bold"/>
+                        <TextBlock Text="سریع، مرتب و بدون شلوغی" Foreground="#8D9BB0" FontSize="12" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <Border Grid.Column="1" CornerRadius="15" Background="#241D2B45" BorderBrush="#22FFFFFF" BorderThickness="1" Padding="13,7">
+                        <StackPanel>
+                            <TextBlock x:Name="ClockText" Text="--:--:--" FontSize="20" FontWeight="Bold" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                            <TextBlock x:Name="DateText" Text="----/--/--" FontSize="10" Foreground="#8291A8" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                        </StackPanel>
                     </Border>
-
-                    <!-- Summary glass tiles -->
-                    <Grid Grid.Row="4">
-                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                        <Border Grid.Column="0" CornerRadius="17" Background="#4A16243D" BorderBrush="#2EFFFFFF" BorderThickness="1" Padding="13" Margin="0,0,6,0">
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Border Width="36" Height="36" CornerRadius="11" Background="#405D6BFF"><TextBlock Text="↗" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="17"/></Border><StackPanel Grid.Column="1"><TextBlock Text="لینک‌ها" FontSize="10" Foreground="#8D9DB5"/><TextBlock x:Name="DashboardLinksText" Text="0" FontSize="20" FontWeight="Bold"/></StackPanel></Grid>
-                        </Border>
-                        <Border Grid.Column="1" CornerRadius="17" Background="#4A16243D" BorderBrush="#2EFFFFFF" BorderThickness="1" Padding="13" Margin="2,0,4,0">
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Border Width="36" Height="36" CornerRadius="11" Background="#3B49B9A2"><TextBlock Text="▦" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/></Border><StackPanel Grid.Column="1"><TextBlock Text="دسته‌ها" FontSize="10" Foreground="#8D9DB5"/><TextBlock x:Name="DashboardCategoriesText" Text="0" FontSize="20" FontWeight="Bold"/></StackPanel></Grid>
-                        </Border>
-                        <Border Grid.Column="2" CornerRadius="17" Background="#4A16243D" BorderBrush="#2EFFFFFF" BorderThickness="1" Padding="13" Margin="4,0,2,0">
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Border Width="36" Height="36" CornerRadius="11" Background="#426F5A2B"><TextBlock Text="★" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Foreground="#FFE1A2"/></Border><StackPanel Grid.Column="1"><TextBlock Text="پین‌شده" FontSize="10" Foreground="#8D9DB5"/><TextBlock x:Name="DashboardPinnedText" Text="0" FontSize="20" FontWeight="Bold"/></StackPanel></Grid>
-                        </Border>
-                        <Border Grid.Column="3" CornerRadius="17" Background="#4A16243D" BorderBrush="#2EFFFFFF" BorderThickness="1" Padding="13" Margin="6,0,0,0">
-                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Border Width="36" Height="36" CornerRadius="11" Background="#404F3B76"><TextBlock Text="◫" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16"/></Border><StackPanel Grid.Column="1"><TextBlock Text="چیدمان" FontSize="10" Foreground="#8D9DB5"/><TextBlock x:Name="LayoutModeText" Text="استاندارد" FontSize="16" FontWeight="Bold" Margin="0,2,0,0"/></StackPanel></Grid>
-                        </Border>
-                    </Grid>
-
-                    <!-- Link cards -->
-                    <ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                        <ItemsControl x:Name="LinksControl" ItemsSource="{Binding LinksView}">
-                            <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Width="{Binding DataContext.CardWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}" MinHeight="176" Margin="0,0,12,12" Padding="14" CornerRadius="19" BorderThickness="1" Tag="{Binding}" AllowDrop="True" PreviewMouseLeftButtonDown="Card_MouseLeftButtonDown" PreviewMouseMove="Card_MouseMove" Drop="Card_Drop">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="#64182540"/>
-                                                <Setter Property="BorderBrush" Value="#32FFFFFF"/>
-                                                <Setter Property="Effect" Value="{StaticResource SoftShadow}"/>
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="#8A213151"/>
-                                                        <Setter Property="BorderBrush" Value="#72FFFFFF"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Grid>
-                                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="46"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-                                                <Border Width="40" Height="40" CornerRadius="13" BorderBrush="#55FFFFFF" BorderThickness="1">
-                                                    <Border.Background><LinearGradientBrush StartPoint="0,0" EndPoint="1,1"><GradientStop Color="#5F6E7CFF" Offset="0"/><GradientStop Color="#3E8B63E9" Offset="1"/></LinearGradientBrush></Border.Background>
-                                                    <TextBlock Text="{Binding DisplayInitial}" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                                </Border>
-                                                <StackPanel Grid.Column="1" Margin="8,0,8,0">
-                                                    <TextBlock Text="{Binding Title}" FontSize="16" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                                                    <TextBlock Text="{Binding HostName}" FontSize="9" Foreground="#8798B1" FlowDirection="LeftToRight" TextAlignment="Right" TextTrimming="CharacterEllipsis"/>
-                                                </StackPanel>
-                                                <Button Grid.Column="2" Content="{Binding PinGlyph}" Tag="{Binding}" Style="{StaticResource MiniIconButton}" Margin="0,0,6,0" ToolTip="پین کردن" Click="PinLink_Click"/>
-                                                <Border Grid.Column="3" Background="#46384C78" BorderBrush="#28FFFFFF" BorderThickness="1" CornerRadius="9" Padding="7,3" VerticalAlignment="Top"><TextBlock Text="{Binding Category}" FontSize="9" Foreground="#D4D9FF"/></Border>
-                                            </Grid>
-                                            <TextBlock Grid.Row="1" Text="{Binding Url}" Margin="0,11,0,0" Foreground="#8292AA" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" FlowDirection="LeftToRight" TextAlignment="Left" FontSize="10"/>
-                                            <Button Grid.Row="2" Content="باز کردن لینک" Tag="{Binding}" Style="{StaticResource AccentButtonStyle}" Margin="0,11,0,8" Click="OpenLink_Click"/>
-                                            <Grid Grid.Row="3">
-                                                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                                                <Button Content="ویرایش" Tag="{Binding}" Padding="8,5" Margin="0,0,4,0" Click="EditLink_Click"/>
-                                                <Button Grid.Column="1" Content="حذف" Tag="{Binding}" Padding="8,5" Margin="4,0,0,0" Background="#604A2636" BorderBrush="#4FBD6D86" Click="DeleteLink_Click"/>
-                                            </Grid>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </ScrollViewer>
                 </Grid>
-            </Border>
-        </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="180"/><ColumnDefinition Width="135"/></Grid.ColumnDefinitions>
+                    <TextBox x:Name="SearchBox" Height="42" VerticalContentAlignment="Center" TextChanged="SearchBox_TextChanged" ToolTip="جستجو در عنوان، آدرس و دسته‌بندی"/>
+                    <ComboBox x:Name="CategoryFilter" Grid.Column="1" Height="42" Margin="10,0,0,0" VerticalContentAlignment="Center" SelectionChanged="CategoryFilter_SelectionChanged"/>
+                    <Button Grid.Column="2" Content="+ افزودن لینک" Style="{StaticResource AccentButtonStyle}" Margin="10,0,0,0" Click="AddLink_Click"/>
+                </Grid>
+
+                <Grid Grid.Row="4">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                    <Border Grid.Column="0" CornerRadius="14" Background="#24192840" Padding="11" Margin="0,0,5,0"><StackPanel><TextBlock Text="کل لینک‌ها" FontSize="9" Foreground="#7D8AA1"/><TextBlock x:Name="DashboardLinksText" Text="0" FontSize="19" FontWeight="Bold"/></StackPanel></Border>
+                    <Border Grid.Column="1" CornerRadius="14" Background="#24192840" Padding="11" Margin="2,0,3,0"><StackPanel><TextBlock Text="دسته‌ها" FontSize="9" Foreground="#7D8AA1"/><TextBlock x:Name="DashboardCategoriesText" Text="0" FontSize="19" FontWeight="Bold"/></StackPanel></Border>
+                    <Border Grid.Column="2" CornerRadius="14" Background="#24192840" Padding="11" Margin="3,0,2,0"><StackPanel><TextBlock Text="پین‌شده" FontSize="9" Foreground="#7D8AA1"/><TextBlock x:Name="DashboardPinnedText" Text="0" FontSize="19" FontWeight="Bold"/></StackPanel></Border>
+                    <Border Grid.Column="3" CornerRadius="14" Background="#24192840" Padding="11" Margin="5,0,0,0"><StackPanel><TextBlock Text="چیدمان" FontSize="9" Foreground="#7D8AA1"/><TextBlock x:Name="LayoutModeText" Text="استاندارد" FontSize="15" FontWeight="Bold"/></StackPanel></Border>
+                </Grid>
+
+                <ScrollViewer Grid.Row="6" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="True">
+                    <ItemsControl x:Name="LinksControl" ItemsSource="{Binding LinksView}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Width="{Binding DataContext.CardWidth, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                        MinHeight="158" Margin="0,0,10,10" Padding="12" CornerRadius="16"
+                                        Background="#381A2841" BorderBrush="#24FFFFFF" BorderThickness="1"
+                                        Tag="{Binding}" AllowDrop="True"
+                                        PreviewMouseLeftButtonDown="Card_MouseLeftButtonDown"
+                                        PreviewMouseMove="Card_MouseMove" Drop="Card_Drop">
+                                    <Grid>
+                                        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="42"/><ColumnDefinition Width="*"/><ColumnDefinition Width="32"/></Grid.ColumnDefinitions>
+                                            <Border Width="36" Height="36" CornerRadius="11" Background="#405C66FF">
+                                                <TextBlock Text="{Binding DisplayInitial}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Grid.Column="1" Margin="8,0,6,0">
+                                                <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Text="{Binding HostName}" FontSize="9" Foreground="#7F8EA5" FlowDirection="LeftToRight" TextAlignment="Right" TextTrimming="CharacterEllipsis"/>
+                                            </StackPanel>
+                                            <Button Grid.Column="2" Style="{StaticResource MiniIconButton}" Content="{Binding PinGlyph}" Tag="{Binding}" Click="PinLink_Click" ToolTip="پین"/>
+                                        </Grid>
+
+                                        <Border Grid.Row="1" Background="#24172437" CornerRadius="8" Padding="7,3" Margin="0,9,0,0" HorizontalAlignment="Right">
+                                            <TextBlock Text="{Binding Category}" FontSize="9" Foreground="#BAC5FF"/>
+                                        </Border>
+
+                                        <Button Grid.Row="2" Content="باز کردن" Tag="{Binding}" Style="{StaticResource AccentButtonStyle}" Margin="0,10,0,7" Padding="8,5" Click="OpenLink_Click"/>
+
+                                        <Grid Grid.Row="3">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                                            <Button Content="ویرایش" Tag="{Binding}" Margin="0,0,4,0" Padding="7,4" Click="EditLink_Click"/>
+                                            <Button Grid.Column="1" Content="حذف" Tag="{Binding}" Margin="4,0,0,0" Padding="7,4" Background="#4831263A" Click="DeleteLink_Click"/>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Grid>
+        </Border>
     </Grid>
 </Window>
