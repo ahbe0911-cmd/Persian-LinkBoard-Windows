@@ -9,6 +9,10 @@ namespace PersianLinkBoard
         public string Title { get; set; }
         public string Url { get; set; }
         public string Category { get; set; }
+        public bool IsPinned { get; set; }
+
+        [XmlIgnore]
+        public string PinGlyph { get { return IsPinned ? "★" : "☆"; } }
 
         [XmlIgnore]
         public string DisplayInitial
