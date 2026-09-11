@@ -108,6 +108,28 @@ namespace PersianLinkBoard
             UpdateCount();
         }
 
+        private void MoveUp_Click(object sender, RoutedEventArgs e)
+        {
+            var link = (sender as Button)?.Tag as LinkItem;
+            if (link == null) return;
+            int index = Links.IndexOf(link);
+            if (index <= 0) return;
+            Links.Move(index, index - 1);
+            SaveLinks();
+            LinksView.Refresh();
+        }
+
+        private void MoveDown_Click(object sender, RoutedEventArgs e)
+        {
+            var link = (sender as Button)?.Tag as LinkItem;
+            if (link == null) return;
+            int index = Links.IndexOf(link);
+            if (index < 0 || index >= Links.Count - 1) return;
+            Links.Move(index, index + 1);
+            SaveLinks();
+            LinksView.Refresh();
+        }
+
         private void OpenLink_Click(object sender, RoutedEventArgs e)
         {
             var link = (sender as Button)?.Tag as LinkItem;
@@ -126,6 +148,18 @@ namespace PersianLinkBoard
         {
             if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return url;
             return "https://" + url;
+        }
+
+        private void Categories_Click(object sender, RoutedEventArgs e)
+        {
+            var groups = Links
+                .GroupBy(x => string.IsNullOrWhiteSpace(x.Category) ? "عمومی" : x.Category)
+                .OrderBy(x => x.Key)
+                .Select(x => x.Key + "  —  " + x.Count() + " لینک")
+                .ToArray();
+
+            MessageBox.Show(groups.Length == 0 ? "هنوز دسته‌بندی‌ای وجود ندارد." : string.Join("\n", groups),
+                "دسته‌بندی‌ها", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void LoadLinks()
@@ -184,12 +218,14 @@ namespace PersianLinkBoard
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("بخش تنظیمات در نسخه بعدی شامل تم، اندازه کارت‌ها، رفتار باز شدن لینک و مدیریت دسته‌بندی‌ها خواهد بود.", "تنظیمات", MessageBoxButton.OK, MessageBoxImage.Information);
+            var result = MessageBox.Show("می‌خواهی برنامه همیشه روی پنجره‌های دیگر باقی بماند؟\n\nYes = فعال\nNo = غیرفعال", "تنظیمات", MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes) Topmost = true;
+            else if (result == MessageBoxResult.No) Topmost = false;
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Persian LinkBoard\nنسخه 0.1\nلانچر لینک‌های کاربردی برای ویندوز", "درباره برنامه", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Persian LinkBoard\nنسخه 0.2\nلانچر لینک‌های کاربردی برای Windows 8.1 / 10 / 11", "درباره برنامه", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
