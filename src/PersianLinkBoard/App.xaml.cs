@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -11,17 +12,20 @@ namespace PersianLinkBoard
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            MergeHtmlDataset();
+            MergeHtmlDatasetOnce();
             base.OnStartup(e);
         }
 
-        private static void MergeHtmlDataset()
+        private static void MergeHtmlDatasetOnce()
         {
             try
             {
                 var folder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PersianLinkBoard");
                 var file = Path.Combine(folder, "links.xml");
+                var marker = Path.Combine(folder, "html-seed-v1.done");
                 Directory.CreateDirectory(folder);
+
+                if (File.Exists(marker)) return;
 
                 var links = new ObservableCollection<LinkItem>();
                 var serializer = new XmlSerializer(typeof(ObservableCollection<LinkItem>));
@@ -34,21 +38,27 @@ namespace PersianLinkBoard
                     }
                 }
 
+                var keys = new HashSet<string>(links.Select(BuildKey), StringComparer.OrdinalIgnoreCase);
                 foreach (var item in HtmlSeedData.Create())
                 {
-                    bool exists = links.Any(x =>
-                        string.Equals((x.Title ?? string.Empty).Trim(), item.Title, StringComparison.CurrentCultureIgnoreCase) &&
-                        string.Equals((x.Url ?? string.Empty).TrimEnd('/'), (item.Url ?? string.Empty).TrimEnd('/'), StringComparison.OrdinalIgnoreCase) &&
-                        string.Equals((x.Category ?? string.Empty).Trim(), item.Category, StringComparison.CurrentCultureIgnoreCase));
-                    if (!exists) links.Add(item);
+                    if (keys.Add(BuildKey(item))) links.Add(item);
                 }
 
                 using (var stream = File.Create(file)) serializer.Serialize(stream, links);
+                File.WriteAllText(marker, "ok");
             }
             catch
             {
-                // MainWindow keeps its existing fallback behavior if migration cannot run.
+                // MainWindow keeps its normal fallback behavior if migration fails.
             }
+        }
+
+        private static string BuildKey(LinkItem item)
+        {
+            var title = (item.Title ?? string.Empty).Trim();
+            var url = (item.Url ?? string.Empty).Trim().TrimEnd('/');
+            var category = (item.Category ?? string.Empty).Trim();
+            return title + "\n" + url + "\n" + category;
         }
     }
 }
